@@ -26,6 +26,11 @@ file_put_contents('.env', \$env);
 "
 fi
 
+# Unset HTTP server vars that Railway injects and confuse Laravel CLI
+unset HTTP_HOST
+unset SERVER_NAME
+unset SERVER_ADDR
+
 if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
 fi
