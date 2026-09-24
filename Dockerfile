@@ -36,7 +36,7 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 
-RUN npm ci && npm run build && rm -rf node_modules
+RUN npm install --ignore-scripts && npm run build && rm -rf node_modules
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
