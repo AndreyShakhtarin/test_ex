@@ -16,9 +16,12 @@ php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
+echo "DATABASE_URL set: $([ -n "$DATABASE_URL" ] && echo yes || echo NO)"
+echo "DB_CONNECTION: $DB_CONNECTION"
+
 # Wait for database to be ready
 echo "Waiting for database..."
-until php artisan db:show > /dev/null 2>&1; do
+until php artisan db:show 2>&1; do
     echo "Database not ready, retrying in 3s..."
     sleep 3
 done
