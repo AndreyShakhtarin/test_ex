@@ -3,18 +3,16 @@
 namespace App\Http\Controllers\Api\Tag;
 
 use App\Data\Tag\UpdateTagData;
-use App\Services\Tag\TagService;
+use App\Services\Tag\GetTagService;
+use App\Services\Tag\UpdateTagService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Put;
 
 class UpdateTagController
 {
     #[Put('/tags/{id}')]
-    public function __invoke(int $id, UpdateTagData $data, TagService $service): JsonResponse
+    public function __invoke(int $id, UpdateTagData $data, GetTagService $find, UpdateTagService $update): JsonResponse
     {
-        $tag = $service->findOrFail($id);
-        $updated = $service->update($tag, $data);
-
-        return response()->json($updated);
+        return response()->json($update->handle($find->handle($id), $data));
     }
 }

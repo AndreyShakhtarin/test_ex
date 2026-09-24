@@ -3,17 +3,15 @@
 namespace App\Http\Controllers\Api\Category;
 
 use App\Data\Category\CreateCategoryData;
-use App\Services\Category\CategoryService;
+use App\Services\Category\CreateCategoryService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Post;
 
 class CreateCategoryController
 {
     #[Post('/categories')]
-    public function __invoke(CreateCategoryData $data, CategoryService $service): JsonResponse
+    public function __invoke(CreateCategoryData $data, CreateCategoryService $service): JsonResponse
     {
-        $category = $service->create($data);
-
-        return response()->json($category, 201);
+        return response()->json($service->handle($data), 201);
     }
 }

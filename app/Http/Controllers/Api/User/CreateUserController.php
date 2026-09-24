@@ -3,17 +3,15 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Data\User\CreateUserData;
-use App\Services\User\UserService;
+use App\Services\User\CreateUserService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Post;
 
 class CreateUserController
 {
     #[Post('/users')]
-    public function __invoke(CreateUserData $data, UserService $service): JsonResponse
+    public function __invoke(CreateUserData $data, CreateUserService $service): JsonResponse
     {
-        $user = $service->create($data);
-
-        return response()->json($user, 201);
+        return response()->json($service->handle($data), 201);
     }
 }

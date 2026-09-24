@@ -3,18 +3,16 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Data\User\UpdateUserData;
-use App\Services\User\UserService;
+use App\Services\User\GetUserService;
+use App\Services\User\UpdateUserService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Put;
 
 class UpdateUserController
 {
     #[Put('/users/{id}')]
-    public function __invoke(int $id, UpdateUserData $data, UserService $service): JsonResponse
+    public function __invoke(int $id, UpdateUserData $data, GetUserService $find, UpdateUserService $update): JsonResponse
     {
-        $user = $service->findOrFail($id);
-        $updated = $service->update($user, $data);
-
-        return response()->json($updated);
+        return response()->json($update->handle($find->handle($id), $data));
     }
 }

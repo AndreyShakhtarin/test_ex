@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Category;
 
-use App\Services\Category\CategoryService;
+use App\Services\Category\ListCategoriesService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\RouteAttributes\Attributes\Get;
@@ -10,10 +10,8 @@ use Spatie\RouteAttributes\Attributes\Get;
 class GetCategoriesController
 {
     #[Get('/categories')]
-    public function __invoke(Request $request, CategoryService $service): JsonResponse
+    public function __invoke(Request $request, ListCategoriesService $service): JsonResponse
     {
-        $categories = $service->list((int) $request->get('per_page', 15));
-
-        return response()->json($categories);
+        return response()->json($service->handle((int) $request->get('per_page', 15)));
     }
 }

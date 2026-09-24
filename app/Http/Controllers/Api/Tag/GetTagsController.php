@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\Tag;
 
-use App\Services\Tag\TagService;
+use App\Services\Tag\ListTagsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\RouteAttributes\Attributes\Get;
@@ -10,10 +10,8 @@ use Spatie\RouteAttributes\Attributes\Get;
 class GetTagsController
 {
     #[Get('/tags')]
-    public function __invoke(Request $request, TagService $service): JsonResponse
+    public function __invoke(Request $request, ListTagsService $service): JsonResponse
     {
-        $tags = $service->list((int) $request->get('per_page', 15));
-
-        return response()->json($tags);
+        return response()->json($service->handle((int) $request->get('per_page', 15)));
     }
 }

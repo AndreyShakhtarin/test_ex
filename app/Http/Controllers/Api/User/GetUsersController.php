@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\User;
 
-use App\Services\User\UserService;
+use App\Services\User\ListUsersService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\RouteAttributes\Attributes\Get;
@@ -10,10 +10,8 @@ use Spatie\RouteAttributes\Attributes\Get;
 class GetUsersController
 {
     #[Get('/users')]
-    public function __invoke(Request $request, UserService $service): JsonResponse
+    public function __invoke(Request $request, ListUsersService $service): JsonResponse
     {
-        $users = $service->list((int) $request->get('per_page', 15));
-
-        return response()->json($users);
+        return response()->json($service->handle((int) $request->get('per_page', 15)));
     }
 }

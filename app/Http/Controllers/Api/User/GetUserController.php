@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\Api\User;
 
-use App\Services\User\UserService;
+use App\Services\User\GetUserService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Get;
 
 class GetUserController
 {
     #[Get('/users/{id}')]
-    public function __invoke(int $id, UserService $service): JsonResponse
+    public function __invoke(int $id, GetUserService $service): JsonResponse
     {
-        $user = $service->findOrFail($id);
-
-        return response()->json($user);
+        return response()->json($service->handle($id));
     }
 }
