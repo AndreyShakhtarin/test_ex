@@ -35,9 +35,9 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
 fi
 
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 
 # Wait for database to be ready
 echo "Waiting for database..."
