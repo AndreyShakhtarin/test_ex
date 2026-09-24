@@ -7,7 +7,7 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
-# Parse DATABASE_URL from Fly.io and write individual DB vars into .env
+# Parse DATABASE_URL into individual DB vars
 if [ -n "$DATABASE_URL" ]; then
     php -r "
 \$url = parse_url(getenv('DATABASE_URL'));
@@ -33,6 +33,22 @@ fi
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+
+# Wait for database to be ready
+echo "Waiting for database..."
+until php artisan db:show > /dev/null 2>&1; do
+    echo "Database not ready, retrying in 3s..."
+    sleep 3
+done
+echo "Database ready."
+
+php artisan migrate --force
+
+# Seed only on first boot
+USER_COUNT=$(php artisan tinker --execute="echo \App\Models\User::query()->count();" 2>/dev/null | grep -E '^[0-9]+$' | tail -1)
+if [ -z "$USER_COUNT" ] || [ "$USER_COUNT" = "0" ]; then
+    php artisan db:seed --force
+fi
 
 mkdir -p /var/log/supervisor
 
