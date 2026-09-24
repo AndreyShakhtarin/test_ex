@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -ex
 
 cd /var/www/html
 
@@ -25,11 +25,6 @@ foreach (\$replacements as \$key => \$value) {
 file_put_contents('.env', \$env);
 "
 fi
-
-# Override HTTP server vars that Railway injects — prevents "Host is malformed" in artisan
-export HTTP_HOST=localhost
-export SERVER_NAME=localhost
-export SERVER_ADDR=127.0.0.1
 
 if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
