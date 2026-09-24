@@ -20,11 +20,21 @@ echo "DATABASE_URL set: $([ -n "$DATABASE_URL" ] && echo yes || echo NO)"
 echo "DB_CONNECTION: $DB_CONNECTION"
 
 # Wait for database to be ready
-echo "Waiting for database..."
-until php artisan db:show 2>&1; do
-    echo "Database not ready, retrying in 3s..."
-    sleep 3
-done
+wait_for_database() {
+    set +e
+    echo "Waiting for database..."
+    while true; do
+        php artisan db:show 2>&1
+        if [ $? -eq 0 ]; then
+            break
+        fi
+        echo "Database not ready, retrying in 3s..."
+        sleep 3
+    done
+    set -e
+}
+
+wait_for_database
 echo "Database ready."
 
 php artisan migrate --force
