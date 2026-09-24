@@ -8,19 +8,24 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class UserRepository implements UserRepositoryInterface
 {
+    public function count(): int
+    {
+        return User::query()->count();
+    }
+
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
-        return User::with('profile')->latest()->paginate($perPage);
+        return User::query()->with('profile')->latest()->paginate($perPage);
     }
 
     public function findById(int $id): ?User
     {
-        return User::with('profile')->find($id);
+        return User::query()->with('profile')->find($id);
     }
 
     public function create(array $data): User
     {
-        return User::create($data);
+        return User::query()->create($data);
     }
 
     public function update(User $user, array $data): User

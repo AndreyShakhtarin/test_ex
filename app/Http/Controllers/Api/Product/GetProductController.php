@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers\Api\Product;
 
-use App\Services\Product\ProductService;
+use App\Services\Product\GetProductService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Get;
 
-#[Get('/products/{id}')]
 class GetProductController
 {
-    public function __invoke(int $id, ProductService $service): JsonResponse
+    #[Get('/products/{id}')]
+    /**
+     * Получить продукт по ID.
+     * Возвращает продукт с категорией и тегами.
+     *
+     * @LRDparam id integer ID продукта
+     * @LRDresponses 200|404
+     */
+    public function __invoke(int $id, GetProductService $service): JsonResponse
     {
-        $product = $service->findOrFail($id);
-
-        return response()->json($product);
+        return response()->json($service->handle($id));
     }
 }

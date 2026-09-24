@@ -5,35 +5,41 @@ namespace App\Data\Product;
 use App\Enums\Product\ProductStatusEnum;
 use Spatie\LaravelData\Attributes\Validation\ArrayType;
 use Spatie\LaravelData\Attributes\Validation\Exists;
+use Spatie\LaravelData\Attributes\Validation\IntegerType;
 use Spatie\LaravelData\Attributes\Validation\Max;
 use Spatie\LaravelData\Attributes\Validation\Min;
+use Spatie\LaravelData\Attributes\Validation\Nullable;
+use Spatie\LaravelData\Attributes\Validation\Numeric;
 use Spatie\LaravelData\Attributes\Validation\Sometimes;
+use Spatie\LaravelData\Attributes\Validation\StringType;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Optional;
 
 class UpdateProductData extends Data
 {
     public function __construct(
-        #[Sometimes, Exists('categories', 'id')]
-        public readonly int|Optional $category_id,
+        #[Sometimes, Nullable, IntegerType, Exists('categories', 'id')]
+        public readonly int|null|Optional $category_id,
 
-        #[Sometimes, Max(255)]
-        public readonly string|Optional $name,
+        #[Sometimes, Nullable, StringType, Max(255)]
+        public readonly string|null|Optional $name,
 
-        #[Sometimes, Max(255)]
-        public readonly string|Optional $slug,
+        #[Sometimes, Nullable, StringType, Max(255)]
+        public readonly string|null|Optional $slug,
 
-        public readonly string|Optional $description,
+        #[Sometimes, Nullable, StringType]
+        public readonly string|null|Optional $description,
 
-        #[Sometimes, Min(0)]
-        public readonly float|Optional $price,
+        #[Sometimes, Nullable, Numeric, Min(0)]
+        public readonly float|null|Optional $price,
 
-        #[Sometimes, Min(0)]
-        public readonly int|Optional $stock,
+        #[Sometimes, Nullable, IntegerType, Min(0)]
+        public readonly int|null|Optional $stock,
 
-        public readonly ProductStatusEnum|Optional $status,
+        #[Sometimes, Nullable]
+        public readonly ProductStatusEnum|null|Optional $status,
 
-        #[Sometimes, ArrayType]
-        public readonly array|Optional $tag_ids,
+        #[Sometimes, Nullable, ArrayType]
+        public readonly array|null|Optional $tag_ids,
     ) {}
 }

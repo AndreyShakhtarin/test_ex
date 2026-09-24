@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers\Api\Tag;
 
-use App\Services\Tag\TagService;
+use App\Services\Tag\GetTagService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Get;
 
-#[Get('/tags/{id}')]
 class GetTagController
 {
-    public function __invoke(int $id, TagService $service): JsonResponse
+    #[Get('/tags/{id}')]
+    /**
+     * Получить тег по ID.
+     * Возвращает тег с количеством связанных продуктов (products_count).
+     *
+     * @LRDparam id integer ID тега
+     * @LRDresponses 200|404
+     */
+    public function __invoke(int $id, GetTagService $service): JsonResponse
     {
-        $tag = $service->findOrFail($id);
-
-        return response()->json($tag);
+        return response()->json($service->handle($id));
     }
 }

@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers\Api\Tag;
 
-use App\Services\Tag\TagService;
+use App\Services\Tag\DeleteTagService;
+use App\Services\Tag\GetTagService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Delete;
 
-#[Delete('/tags/{id}')]
 class DeleteTagController
 {
-    public function __invoke(int $id, TagService $service): JsonResponse
+    #[Delete('/tags/{id}')]
+    /**
+     * Удалить тег по ID.
+     * Отправляет событие entity.deleted в WebSocket-канал entities.
+     *
+     * @LRDparam id integer ID тега
+     * @LRDresponses 200|404
+     */
+    public function __invoke(int $id, GetTagService $find, DeleteTagService $delete): JsonResponse
     {
-        $tag = $service->findOrFail($id);
-        $service->delete($tag);
+        $delete->handle($find->handle($id));
 
         return response()->json(['message' => 'Tag deleted successfully']);
     }

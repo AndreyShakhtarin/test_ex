@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers\Api\Product;
 
-use App\Services\Product\ProductService;
+use App\Services\Product\ListProductsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\RouteAttributes\Attributes\Get;
 
-#[Get('/products')]
 class GetProductsController
 {
-    public function __invoke(Request $request, ProductService $service): JsonResponse
+    #[Get('/products')]
+    /**
+     * Список продуктов с пагинацией.
+     * Возвращает продукты с категорией и тегами.
+     *
+     * @LRDparam per_page integer|optional Количество записей на странице (по умолчанию: 15)
+     * @LRDresponses 200
+     */
+    public function __invoke(Request $request, ListProductsService $service): JsonResponse
     {
-        $products = $service->list((int) $request->get('per_page', 15));
-
-        return response()->json($products);
+        return response()->json($service->handle((int) $request->get('per_page', 15)));
     }
 }

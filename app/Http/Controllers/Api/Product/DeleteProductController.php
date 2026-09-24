@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers\Api\Product;
 
-use App\Services\Product\ProductService;
+use App\Services\Product\DeleteProductService;
+use App\Services\Product\GetProductService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Delete;
 
-#[Delete('/products/{id}')]
 class DeleteProductController
 {
-    public function __invoke(int $id, ProductService $service): JsonResponse
+    #[Delete('/products/{id}')]
+    /**
+     * Удалить продукт по ID.
+     * Отправляет событие entity.deleted в WebSocket-канал entities.
+     *
+     * @LRDparam id integer ID продукта
+     * @LRDresponses 200|404
+     */
+    public function __invoke(int $id, GetProductService $find, DeleteProductService $delete): JsonResponse
     {
-        $product = $service->findOrFail($id);
-        $service->delete($product);
+        $delete->handle($find->handle($id));
 
         return response()->json(['message' => 'Product deleted successfully']);
     }

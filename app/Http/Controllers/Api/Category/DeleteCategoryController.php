@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers\Api\Category;
 
-use App\Services\Category\CategoryService;
+use App\Services\Category\DeleteCategoryService;
+use App\Services\Category\GetCategoryService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Delete;
 
-#[Delete('/categories/{id}')]
 class DeleteCategoryController
 {
-    public function __invoke(int $id, CategoryService $service): JsonResponse
+    #[Delete('/categories/{id}')]
+    /**
+     * Удалить категорию по ID.
+     * Отправляет событие entity.deleted в WebSocket-канал entities.
+     *
+     * @LRDparam id integer ID категории
+     * @LRDresponses 200|404
+     */
+    public function __invoke(int $id, GetCategoryService $find, DeleteCategoryService $delete): JsonResponse
     {
-        $category = $service->findOrFail($id);
-        $service->delete($category);
+        $delete->handle($find->handle($id));
 
         return response()->json(['message' => 'Category deleted successfully']);
     }

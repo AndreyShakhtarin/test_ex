@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers\Api\User;
 
-use App\Services\User\UserService;
+use App\Services\User\ListUsersService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Spatie\RouteAttributes\Attributes\Get;
 
-#[Get('/users')]
 class GetUsersController
 {
-    public function __invoke(Request $request, UserService $service): JsonResponse
+    #[Get('/users')]
+    /**
+     * Список пользователей с пагинацией.
+     * Возвращает пользователей вместе с профилем.
+     *
+     * @LRDparam per_page integer|optional Количество записей на странице (по умолчанию: 15)
+     * @LRDresponses 200
+     */
+    public function __invoke(Request $request, ListUsersService $service): JsonResponse
     {
-        $users = $service->list((int) $request->get('per_page', 15));
-
-        return response()->json($users);
+        return response()->json($service->handle((int) $request->get('per_page', 15)));
     }
 }

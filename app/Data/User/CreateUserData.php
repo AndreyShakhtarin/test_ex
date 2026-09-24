@@ -6,19 +6,20 @@ use Spatie\LaravelData\Attributes\Validation\Email;
 use Spatie\LaravelData\Attributes\Validation\Max;
 use Spatie\LaravelData\Attributes\Validation\Min;
 use Spatie\LaravelData\Attributes\Validation\Required;
+use Spatie\LaravelData\Attributes\Validation\StringType;
 use Spatie\LaravelData\Attributes\Validation\Unique;
 use Spatie\LaravelData\Data;
 
 class CreateUserData extends Data
 {
     public function __construct(
-        #[Required, Max(255)]
+        #[Required, StringType, Max(255)]
         public readonly string $name,
 
-        #[Required, Email, Max(255), Unique('users', 'email')]
+        #[Required, StringType, Email, Max(255), Unique('users', 'email')]
         public readonly string $email,
 
-        #[Required, Min(8), Max(255)]
+        #[Required, StringType, Min(8), Max(255)]
         public readonly string $password,
     ) {}
 }

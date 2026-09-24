@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers\Api\Category;
 
-use App\Services\Category\CategoryService;
+use App\Services\Category\GetCategoryService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Get;
 
-#[Get('/categories/{id}')]
 class GetCategoryController
 {
-    public function __invoke(int $id, CategoryService $service): JsonResponse
+    #[Get('/categories/{id}')]
+    /**
+     * Получить категорию по ID.
+     * Возвращает категорию с количеством продуктов (products_count).
+     *
+     * @LRDparam id integer ID категории
+     * @LRDresponses 200|404
+     */
+    public function __invoke(int $id, GetCategoryService $service): JsonResponse
     {
-        $category = $service->findOrFail($id);
-
-        return response()->json($category);
+        return response()->json($service->handle($id));
     }
 }

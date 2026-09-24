@@ -65,6 +65,15 @@
         .links { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; }
         .link-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; background: #1e293b; border: 1px solid #334155; border-radius: 0.5rem; color: #e2e8f0; text-decoration: none; font-size: 0.85rem; transition: all 0.15s; }
         .link-btn:hover { border-color: #6366f1; color: #a5b4fc; }
+        .admin-card { background: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 1.25rem; }
+        .admin-card a.open-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; background: #6366f1; border-radius: 0.5rem; color: white; text-decoration: none; font-size: 0.85rem; font-weight: 600; white-space: nowrap; transition: background 0.15s; }
+        .admin-card a.open-btn:hover { background: #4f46e5; }
+        .cred-row { display: flex; align-items: center; gap: 0.5rem; }
+        .cred-label { font-size: 0.72rem; color: #64748b; width: 3rem; }
+        .cred-value { font-family: monospace; font-size: 0.85rem; color: #e2e8f0; background: #0f172a; border: 1px solid #334155; border-radius: 0.4rem; padding: 0.25rem 0.6rem; cursor: text; user-select: all; }
+        .copy-btn { font-size: 0.7rem; color: #64748b; background: none; border: none; cursor: pointer; padding: 0.2rem 0.4rem; border-radius: 0.3rem; transition: all 0.15s; }
+        .copy-btn:hover { color: #a5b4fc; background: #334155; }
+        .copy-btn.copied { color: #22c55e; }
         .empty { color: #475569; font-size: 0.85rem; text-align: center; padding: 1.5rem; }
     </style>
 </head>
@@ -78,8 +87,22 @@
 <div class="container">
 
     <div class="links">
-        <a href="/admin" class="link-btn">Admin Panel (Filament)</a>
-        <a href="/request-docs" class="link-btn">API Documentation</a>
+        <div class="admin-card">
+            <a href="/admin/login" class="open-btn" target="_blank">Admin Panel ↗</a>
+            <div>
+                <div class="cred-row">
+                    <span class="cred-label">Email</span>
+                    <span class="cred-value" id="cred-email">admin@example.com</span>
+                    <button class="copy-btn" onclick="copyText('cred-email', this)">copy</button>
+                </div>
+                <div class="cred-row" style="margin-top:0.35rem">
+                    <span class="cred-label">Pass</span>
+                    <span class="cred-value" id="cred-pass">password</span>
+                    <button class="copy-btn" onclick="copyText('cred-pass', this)">copy</button>
+                </div>
+            </div>
+        </div>
+        <a href="/request-docs" class="link-btn" target="_blank">API Documentation ↗</a>
     </div>
 
     <div class="grid">
@@ -251,6 +274,15 @@
 </div>
 
 <script>
+function copyText(id, btn) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
+    });
+}
+
 const api = window.axios.create({
     baseURL: '/api',
     headers: {
