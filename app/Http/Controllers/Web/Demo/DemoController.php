@@ -9,9 +9,9 @@ use App\Models\User;
 use Illuminate\View\View;
 use Spatie\RouteAttributes\Attributes\Get;
 
-#[Get('/demo')]
 class DemoController
 {
+    #[Get('/demo')]
     public function __invoke(): View
     {
         return view('demo', [
