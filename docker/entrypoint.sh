@@ -7,9 +7,23 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
-# Parse DATABASE_URL from Fly.io into individual DB vars
+# Parse DATABASE_URL from Fly.io and write individual DB vars into .env
 if [ -n "$DATABASE_URL" ]; then
-    export DB_URL="$DATABASE_URL"
+    php -r "
+\$url = parse_url(getenv('DATABASE_URL'));
+\$env = file_get_contents('.env');
+\$replacements = [
+    'DB_HOST'     => \$url['host'],
+    'DB_PORT'     => \$url['port'] ?? 5432,
+    'DB_DATABASE' => ltrim(\$url['path'], '/'),
+    'DB_USERNAME' => \$url['user'],
+    'DB_PASSWORD' => \$url['pass'],
+];
+foreach (\$replacements as \$key => \$value) {
+    \$env = preg_replace('/^' . \$key . '=.*/m', \$key . '=' . \$value, \$env);
+}
+file_put_contents('.env', \$env);
+"
 fi
 
 if [ -z "$APP_KEY" ]; then
@@ -22,7 +36,11 @@ php artisan view:cache
 
 php artisan migrate --force
 
-php artisan db:seed --force
+# Seed only on first boot (when users table is empty)
+USER_COUNT=$(php artisan tinker --execute="echo \App\Models\User::count();" 2>/dev/null | grep -E '^[0-9]+$' | tail -1)
+if [ -z "$USER_COUNT" ] || [ "$USER_COUNT" = "0" ]; then
+    php artisan db:seed --force
+fi
 
 mkdir -p /var/log/supervisor
 
