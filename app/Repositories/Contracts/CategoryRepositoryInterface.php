@@ -7,6 +7,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface CategoryRepositoryInterface
 {
+    public function count(): int;
+
     public function paginate(int $perPage = 15): LengthAwarePaginator;
 
     public function findById(int $id): ?Category;

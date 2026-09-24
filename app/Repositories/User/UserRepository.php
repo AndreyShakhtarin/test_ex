@@ -8,6 +8,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class UserRepository implements UserRepositoryInterface
 {
+    public function count(): int
+    {
+        return User::query()->count();
+    }
+
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
         return User::query()->with('profile')->latest()->paginate($perPage);

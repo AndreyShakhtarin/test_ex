@@ -8,6 +8,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductRepository implements ProductRepositoryInterface
 {
+    public function count(): int
+    {
+        return Product::query()->count();
+    }
+
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
         return Product::query()->with(['category', 'tags'])->latest()->paginate($perPage);

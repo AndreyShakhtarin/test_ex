@@ -8,6 +8,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class TagRepository implements TagRepositoryInterface
 {
+    public function count(): int
+    {
+        return Tag::query()->count();
+    }
+
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
         return Tag::query()->withCount('products')->latest()->paginate($perPage);
