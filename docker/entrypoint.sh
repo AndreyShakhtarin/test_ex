@@ -34,14 +34,6 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-php artisan migrate --force
-
-# Seed only on first boot (when users table is empty)
-USER_COUNT=$(php artisan tinker --execute="echo \App\Models\User::count();" 2>/dev/null | grep -E '^[0-9]+$' | tail -1)
-if [ -z "$USER_COUNT" ] || [ "$USER_COUNT" = "0" ]; then
-    php artisan db:seed --force
-fi
-
 mkdir -p /var/log/supervisor
 
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
