@@ -3,10 +3,10 @@
 namespace App\Repositories\User;
 
 use App\Models\User;
-use App\Repositories\User\UserRepository;
+use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class UserRepository
+class UserRepository implements UserRepositoryInterface
 {
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {

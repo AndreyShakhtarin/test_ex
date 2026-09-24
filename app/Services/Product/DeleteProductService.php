@@ -4,12 +4,12 @@ namespace App\Services\Product;
 
 use App\Events\EntityDeleted;
 use App\Models\Product;
-use App\Repositories\Product\ProductRepository;
+use App\Repositories\Contracts\ProductRepositoryInterface;
 
 class DeleteProductService
 {
     public function __construct(
-        private readonly ProductRepository $repository,
+        private readonly ProductRepositoryInterface $repository,
     ) {}
 
     public function handle(Product $product): void

@@ -3,10 +3,10 @@
 namespace App\Repositories\Category;
 
 use App\Models\Category;
-use App\Repositories\Category\CategoryRepository;
+use App\Repositories\Contracts\CategoryRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class CategoryRepository
+class CategoryRepository implements CategoryRepositoryInterface
 {
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {

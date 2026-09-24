@@ -4,12 +4,12 @@ namespace App\Services\Tag;
 
 use App\Events\EntityDeleted;
 use App\Models\Tag;
-use App\Repositories\Tag\TagRepository;
+use App\Repositories\Contracts\TagRepositoryInterface;
 
 class DeleteTagService
 {
     public function __construct(
-        private readonly TagRepository $repository,
+        private readonly TagRepositoryInterface $repository,
     ) {}
 
     public function handle(Tag $tag): void

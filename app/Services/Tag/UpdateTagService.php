@@ -5,12 +5,12 @@ namespace App\Services\Tag;
 use App\Data\Tag\UpdateTagData;
 use App\Events\EntityUpdated;
 use App\Models\Tag;
-use App\Repositories\Tag\TagRepository;
+use App\Repositories\Contracts\TagRepositoryInterface;
 
 class UpdateTagService
 {
     public function __construct(
-        private readonly TagRepository $repository,
+        private readonly TagRepositoryInterface $repository,
     ) {}
 
     public function handle(Tag $tag, UpdateTagData $data): Tag

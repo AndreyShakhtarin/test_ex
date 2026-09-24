@@ -4,12 +4,12 @@ namespace App\Services\User;
 
 use App\Events\EntityDeleted;
 use App\Models\User;
-use App\Repositories\User\UserRepository;
+use App\Repositories\Contracts\UserRepositoryInterface;
 
 class DeleteUserService
 {
     public function __construct(
-        private readonly UserRepository $repository,
+        private readonly UserRepositoryInterface $repository,
     ) {}
 
     public function handle(User $user): void

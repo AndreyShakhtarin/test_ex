@@ -3,10 +3,10 @@
 namespace App\Repositories\Product;
 
 use App\Models\Product;
-use App\Repositories\Product\ProductRepository;
+use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class ProductRepository
+class ProductRepository implements ProductRepositoryInterface
 {
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {

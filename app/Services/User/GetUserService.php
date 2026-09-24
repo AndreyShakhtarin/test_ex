@@ -3,12 +3,12 @@
 namespace App\Services\User;
 
 use App\Models\User;
-use App\Repositories\User\UserRepository;
+use App\Repositories\Contracts\UserRepositoryInterface;
 
 class GetUserService
 {
     public function __construct(
-        private readonly UserRepository $repository,
+        private readonly UserRepositoryInterface $repository,
     ) {}
 
     public function handle(int $id): User

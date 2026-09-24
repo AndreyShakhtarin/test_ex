@@ -5,13 +5,13 @@ namespace App\Services\Product;
 use App\Data\Product\CreateProductData;
 use App\Events\EntityCreated;
 use App\Models\Product;
-use App\Repositories\Product\ProductRepository;
+use App\Repositories\Contracts\ProductRepositoryInterface;
 use Spatie\LaravelData\Optional;
 
 class CreateProductService
 {
     public function __construct(
-        private readonly ProductRepository $repository,
+        private readonly ProductRepositoryInterface $repository,
     ) {}
 
     public function handle(CreateProductData $data): Product

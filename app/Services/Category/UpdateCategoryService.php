@@ -5,12 +5,12 @@ namespace App\Services\Category;
 use App\Data\Category\UpdateCategoryData;
 use App\Events\EntityUpdated;
 use App\Models\Category;
-use App\Repositories\Category\CategoryRepository;
+use App\Repositories\Contracts\CategoryRepositoryInterface;
 
 class UpdateCategoryService
 {
     public function __construct(
-        private readonly CategoryRepository $repository,
+        private readonly CategoryRepositoryInterface $repository,
     ) {}
 
     public function handle(Category $category, UpdateCategoryData $data): Category

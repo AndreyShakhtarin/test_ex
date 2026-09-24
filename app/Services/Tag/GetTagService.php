@@ -3,12 +3,12 @@
 namespace App\Services\Tag;
 
 use App\Models\Tag;
-use App\Repositories\Tag\TagRepository;
+use App\Repositories\Contracts\TagRepositoryInterface;
 
 class GetTagService
 {
     public function __construct(
-        private readonly TagRepository $repository,
+        private readonly TagRepositoryInterface $repository,
     ) {}
 
     public function handle(int $id): Tag

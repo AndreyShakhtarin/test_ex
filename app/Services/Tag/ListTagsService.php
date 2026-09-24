@@ -2,13 +2,13 @@
 
 namespace App\Services\Tag;
 
-use App\Repositories\Tag\TagRepository;
+use App\Repositories\Contracts\TagRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ListTagsService
 {
     public function __construct(
-        private readonly TagRepository $repository,
+        private readonly TagRepositoryInterface $repository,
     ) {}
 
     public function handle(int $perPage = 15): LengthAwarePaginator
