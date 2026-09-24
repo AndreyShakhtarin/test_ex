@@ -26,10 +26,10 @@ file_put_contents('.env', \$env);
 "
 fi
 
-# Unset HTTP server vars that Railway injects and confuse Laravel CLI
-unset HTTP_HOST
-unset SERVER_NAME
-unset SERVER_ADDR
+# Override HTTP server vars that Railway injects — prevents "Host is malformed" in artisan
+export HTTP_HOST=localhost
+export SERVER_NAME=localhost
+export SERVER_ADDR=127.0.0.1
 
 if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
