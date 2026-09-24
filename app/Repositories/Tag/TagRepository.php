@@ -10,17 +10,17 @@ class TagRepository implements TagRepositoryInterface
 {
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
-        return Tag::withCount('products')->latest()->paginate($perPage);
+        return Tag::query()->withCount('products')->latest()->paginate($perPage);
     }
 
     public function findById(int $id): ?Tag
     {
-        return Tag::withCount('products')->find($id);
+        return Tag::query()->withCount('products')->find($id);
     }
 
     public function create(array $data): Tag
     {
-        return Tag::create($data);
+        return Tag::query()->create($data);
     }
 
     public function update(Tag $tag, array $data): Tag

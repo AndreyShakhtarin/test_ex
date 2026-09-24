@@ -10,17 +10,17 @@ class CategoryRepository implements CategoryRepositoryInterface
 {
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
-        return Category::withCount('products')->latest()->paginate($perPage);
+        return Category::query()->withCount('products')->latest()->paginate($perPage);
     }
 
     public function findById(int $id): ?Category
     {
-        return Category::withCount('products')->find($id);
+        return Category::query()->withCount('products')->find($id);
     }
 
     public function create(array $data): Category
     {
-        return Category::create($data);
+        return Category::query()->create($data);
     }
 
     public function update(Category $category, array $data): Category

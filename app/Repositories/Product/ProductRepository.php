@@ -10,17 +10,17 @@ class ProductRepository implements ProductRepositoryInterface
 {
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
-        return Product::with(['category', 'tags'])->latest()->paginate($perPage);
+        return Product::query()->with(['category', 'tags'])->latest()->paginate($perPage);
     }
 
     public function findById(int $id): ?Product
     {
-        return Product::with(['category', 'tags'])->find($id);
+        return Product::query()->with(['category', 'tags'])->find($id);
     }
 
     public function create(array $data): Product
     {
-        return Product::create($data);
+        return Product::query()->create($data);
     }
 
     public function update(Product $product, array $data): Product
