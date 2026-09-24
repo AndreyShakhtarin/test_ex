@@ -1,5 +1,7 @@
 FROM php:8.3-fpm-alpine AS base
 
+RUN apk add --no-cache linux-headers
+
 RUN apk add --no-cache \
     nginx \
     supervisor \
@@ -13,8 +15,7 @@ RUN apk add --no-cache \
     curl \
     git \
     oniguruma-dev \
-    icu-dev \
-    linux-headers
+    icu-dev
 
 RUN docker-php-ext-install \
     pdo \
