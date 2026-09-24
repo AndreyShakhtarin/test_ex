@@ -13,7 +13,8 @@ RUN apk add --no-cache \
     curl \
     git \
     oniguruma-dev \
-    icu-dev
+    icu-dev \
+    linux-headers
 
 RUN docker-php-ext-install \
     pdo \
@@ -24,8 +25,8 @@ RUN docker-php-ext-install \
     bcmath \
     opcache \
     intl \
-    sockets \
-    pcntl
+    pcntl \
+    sockets
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
