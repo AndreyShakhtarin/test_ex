@@ -11,6 +11,15 @@ use Spatie\RouteAttributes\Attributes\Put;
 class UpdateUserController
 {
     #[Put('/users/{id}')]
+    /**
+     * Обновить данные пользователя.
+     * Принимает любые из полей: name (string), email (string), password (string, min:8).
+     * Все поля опциональны. Возвращает обновлённого пользователя с профилем.
+     * Отправляет событие entity.updated в WebSocket-канал entities.
+     *
+     * @LRDparam id integer ID пользователя
+     * @LRDresponses 200|404|422
+     */
     public function __invoke(int $id, UpdateUserData $data, GetUserService $find, UpdateUserService $update): JsonResponse
     {
         return response()->json($update->handle($find->handle($id), $data));

@@ -11,6 +11,14 @@ use Spatie\RouteAttributes\Attributes\Put;
 class UpdateTagController
 {
     #[Put('/tags/{id}')]
+    /**
+     * Обновить тег.
+     * Принимает любые из полей: name (string), slug (string), color (string, max:7).
+     * Возвращает обновлённый тег. Отправляет событие entity.updated в WebSocket-канал entities.
+     *
+     * @LRDparam id integer ID тега
+     * @LRDresponses 200|404|422
+     */
     public function __invoke(int $id, UpdateTagData $data, GetTagService $find, UpdateTagService $update): JsonResponse
     {
         return response()->json($update->handle($find->handle($id), $data));
