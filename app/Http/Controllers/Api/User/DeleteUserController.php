@@ -6,9 +6,9 @@ use App\Services\User\UserService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Delete;
 
-#[Delete('/users/{id}')]
 class DeleteUserController
 {
+    #[Delete('/users/{id}')]
     public function __invoke(int $id, UserService $service): JsonResponse
     {
         $user = $service->findOrFail($id);

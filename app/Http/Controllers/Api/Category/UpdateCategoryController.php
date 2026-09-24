@@ -7,9 +7,9 @@ use App\Services\Category\CategoryService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Put;
 
-#[Put('/categories/{id}')]
 class UpdateCategoryController
 {
+    #[Put('/categories/{id}')]
     public function __invoke(int $id, UpdateCategoryData $data, CategoryService $service): JsonResponse
     {
         $category = $service->findOrFail($id);

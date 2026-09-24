@@ -6,9 +6,9 @@ use App\Services\Product\ProductService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Delete;
 
-#[Delete('/products/{id}')]
 class DeleteProductController
 {
+    #[Delete('/products/{id}')]
     public function __invoke(int $id, ProductService $service): JsonResponse
     {
         $product = $service->findOrFail($id);

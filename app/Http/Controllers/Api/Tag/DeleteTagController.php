@@ -6,9 +6,9 @@ use App\Services\Tag\TagService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Delete;
 
-#[Delete('/tags/{id}')]
 class DeleteTagController
 {
+    #[Delete('/tags/{id}')]
     public function __invoke(int $id, TagService $service): JsonResponse
     {
         $tag = $service->findOrFail($id);

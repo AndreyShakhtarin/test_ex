@@ -6,9 +6,9 @@ use App\Services\User\UserService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Get;
 
-#[Get('/users/{id}')]
 class GetUserController
 {
+    #[Get('/users/{id}')]
     public function __invoke(int $id, UserService $service): JsonResponse
     {
         $user = $service->findOrFail($id);

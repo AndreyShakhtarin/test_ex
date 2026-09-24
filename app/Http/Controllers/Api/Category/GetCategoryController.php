@@ -6,9 +6,9 @@ use App\Services\Category\CategoryService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Get;
 
-#[Get('/categories/{id}')]
 class GetCategoryController
 {
+    #[Get('/categories/{id}')]
     public function __invoke(int $id, CategoryService $service): JsonResponse
     {
         $category = $service->findOrFail($id);

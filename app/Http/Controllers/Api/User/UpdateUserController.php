@@ -7,9 +7,9 @@ use App\Services\User\UserService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Put;
 
-#[Put('/users/{id}')]
 class UpdateUserController
 {
+    #[Put('/users/{id}')]
     public function __invoke(int $id, UpdateUserData $data, UserService $service): JsonResponse
     {
         $user = $service->findOrFail($id);

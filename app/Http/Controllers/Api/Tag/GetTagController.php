@@ -6,9 +6,9 @@ use App\Services\Tag\TagService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Get;
 
-#[Get('/tags/{id}')]
 class GetTagController
 {
+    #[Get('/tags/{id}')]
     public function __invoke(int $id, TagService $service): JsonResponse
     {
         $tag = $service->findOrFail($id);

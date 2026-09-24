@@ -7,9 +7,9 @@ use App\Services\Product\ProductService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Post;
 
-#[Post('/products')]
 class CreateProductController
 {
+    #[Post('/products')]
     public function __invoke(CreateProductData $data, ProductService $service): JsonResponse
     {
         $product = $service->create($data);

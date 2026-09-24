@@ -7,9 +7,9 @@ use App\Services\Product\ProductService;
 use Illuminate\Http\JsonResponse;
 use Spatie\RouteAttributes\Attributes\Put;
 
-#[Put('/products/{id}')]
 class UpdateProductController
 {
+    #[Put('/products/{id}')]
     public function __invoke(int $id, UpdateProductData $data, ProductService $service): JsonResponse
     {
         $product = $service->findOrFail($id);
