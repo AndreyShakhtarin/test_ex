@@ -65,6 +65,7 @@
         .links { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; }
         .link-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; background: #1e293b; border: 1px solid #334155; border-radius: 0.5rem; color: #e2e8f0; text-decoration: none; font-size: 0.85rem; transition: all 0.15s; }
         .link-btn:hover { border-color: #6366f1; color: #a5b4fc; }
+        .link-hint { font-size: 0.72rem; color: #64748b; margin-top: 0.2rem; }
         .empty { color: #475569; font-size: 0.85rem; text-align: center; padding: 1.5rem; }
     </style>
 </head>
@@ -78,8 +79,11 @@
 <div class="container">
 
     <div class="links">
-        <a href="/admin" class="link-btn">Admin Panel (Filament)</a>
-        <a href="/request-docs" class="link-btn">API Documentation</a>
+        <div>
+            <a href="/admin" class="link-btn" target="_blank">Admin Panel (Filament) ↗</a>
+            <div class="link-hint">admin@example.com / password</div>
+        </div>
+        <a href="/request-docs" class="link-btn" target="_blank">API Documentation ↗</a>
     </div>
 
     <div class="grid">

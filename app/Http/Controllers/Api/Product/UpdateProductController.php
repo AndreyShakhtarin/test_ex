@@ -13,12 +13,21 @@ class UpdateProductController
     #[Put('/products/{id}')]
     /**
      * Обновить продукт.
-     * Принимает любые из полей: category_id (int), name (string), slug (string), description (string),
-     * price (float, min:0), stock (int, min:0), status (string: active|inactive), tag_ids (array of int).
-     * Возвращает обновлённый продукт с категорией и тегами.
-     * Отправляет событие entity.updated в WebSocket-канал entities.
      *
-     * @LRDparam id integer ID продукта
+     * @lrd:start
+     * Все поля опциональны. Возвращает обновлённый продукт с категорией и тегами.
+     * Отправляет событие `entity.updated` в WebSocket-канал `entities`.
+     * @lrd:end
+     *
+     * @LRDparam id integer ID продукта. Пример: 1
+     * @LRDparam category_id integer|nullable ID категории. Пример: 2
+     * @LRDparam name string|nullable Новое название. Пример: iPhone 15 Pro Max
+     * @LRDparam slug string|nullable Новый слаг. Пример: iphone-15-pro-max
+     * @LRDparam description string|nullable Новое описание. Пример: Обновлённая версия
+     * @LRDparam price number|nullable Новая цена. Пример: 1099.99
+     * @LRDparam stock integer|nullable Новое количество. Пример: 25
+     * @LRDparam status string|nullable Новый статус: active | inactive | out_of_stock. Пример: inactive
+     * @LRDparam tag_ids array|nullable Новый массив ID тегов. Пример: [1, 3]
      * @LRDresponses 200|404|422
      */
     public function __invoke(int $id, UpdateProductData $data, GetProductService $find, UpdateProductService $update): JsonResponse

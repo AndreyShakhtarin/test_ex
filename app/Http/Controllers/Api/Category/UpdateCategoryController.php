@@ -13,10 +13,16 @@ class UpdateCategoryController
     #[Put('/categories/{id}')]
     /**
      * Обновить категорию.
-     * Принимает любые из полей: name (string), slug (string), description (string), is_active (bool).
-     * Возвращает обновлённую категорию. Отправляет событие entity.updated в WebSocket-канал entities.
      *
-     * @LRDparam id integer ID категории
+     * @lrd:start
+     * Все поля опциональны. Отправляет событие `entity.updated` в WebSocket-канал `entities`.
+     * @lrd:end
+     *
+     * @LRDparam id integer ID категории. Пример: 1
+     * @LRDparam name string|nullable Новое название. Пример: Смартфоны
+     * @LRDparam slug string|nullable Новый слаг. Пример: smartphones
+     * @LRDparam description string|nullable Новое описание. Пример: Только смартфоны
+     * @LRDparam is_active boolean|nullable Статус активности. Пример: false
      * @LRDresponses 200|404|422
      */
     public function __invoke(int $id, UpdateCategoryData $data, GetCategoryService $find, UpdateCategoryService $update): JsonResponse

@@ -13,10 +13,15 @@ class UpdateTagController
     #[Put('/tags/{id}')]
     /**
      * Обновить тег.
-     * Принимает любые из полей: name (string), slug (string), color (string, max:7).
-     * Возвращает обновлённый тег. Отправляет событие entity.updated в WebSocket-канал entities.
      *
-     * @LRDparam id integer ID тега
+     * @lrd:start
+     * Все поля опциональны. Отправляет событие `entity.updated` в WebSocket-канал `entities`.
+     * @lrd:end
+     *
+     * @LRDparam id integer ID тега. Пример: 1
+     * @LRDparam name string|nullable Новое название. Пример: Новинки
+     * @LRDparam slug string|nullable Новый слаг. Пример: new-arrivals
+     * @LRDparam color string|nullable Новый HEX-цвет. Пример: #33FF57
      * @LRDresponses 200|404|422
      */
     public function __invoke(int $id, UpdateTagData $data, GetTagService $find, UpdateTagService $update): JsonResponse

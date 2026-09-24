@@ -12,9 +12,14 @@ class CreateUserController
     #[Post('/users')]
     /**
      * Создать нового пользователя.
-     * Принимает: name (string, max:255), email (string, unique), password (string, min:8).
-     * Возвращает созданного пользователя. Отправляет событие entity.created в WebSocket-канал entities.
      *
+     * @lrd:start
+     * Создаёт пользователя. После создания отправляет событие `entity.created` в WebSocket-канал `entities`.
+     * @lrd:end
+     *
+     * @LRDparam name string|required Имя пользователя. Пример: John Doe
+     * @LRDparam email string|required Email адрес (уникальный). Пример: john@example.com
+     * @LRDparam password string|required Пароль минимум 8 символов. Пример: secret123
      * @LRDresponses 201|422
      */
     public function __invoke(CreateUserData $data, CreateUserService $service): JsonResponse

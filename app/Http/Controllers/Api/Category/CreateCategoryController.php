@@ -12,9 +12,15 @@ class CreateCategoryController
     #[Post('/categories')]
     /**
      * Создать новую категорию.
-     * Принимает: name (string, max:255), slug (string, unique, max:255), description (string, optional), is_active (bool, default:true).
-     * Возвращает созданную категорию. Отправляет событие entity.created в WebSocket-канал entities.
      *
+     * @lrd:start
+     * Отправляет событие `entity.created` в WebSocket-канал `entities`.
+     * @lrd:end
+     *
+     * @LRDparam name string|required Название категории. Пример: Электроника
+     * @LRDparam slug string|required URL-слаг (уникальный). Пример: electronics
+     * @LRDparam description string|nullable Описание категории. Пример: Смартфоны, планшеты и аксессуары
+     * @LRDparam is_active boolean По умолчанию true. Пример: true
      * @LRDresponses 201|422
      */
     public function __invoke(CreateCategoryData $data, CreateCategoryService $service): JsonResponse

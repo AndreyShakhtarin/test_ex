@@ -13,11 +13,15 @@ class UpdateUserController
     #[Put('/users/{id}')]
     /**
      * Обновить данные пользователя.
-     * Принимает любые из полей: name (string), email (string), password (string, min:8).
-     * Все поля опциональны. Возвращает обновлённого пользователя с профилем.
-     * Отправляет событие entity.updated в WebSocket-канал entities.
      *
-     * @LRDparam id integer ID пользователя
+     * @lrd:start
+     * Все поля опциональны. Отправляет событие `entity.updated` в WebSocket-канал `entities`.
+     * @lrd:end
+     *
+     * @LRDparam id integer ID пользователя. Пример: 1
+     * @LRDparam name string|nullable Новое имя. Пример: Jane Doe
+     * @LRDparam email string|nullable Новый email. Пример: jane@example.com
+     * @LRDparam password string|nullable Новый пароль минимум 8 символов. Пример: newpass123
      * @LRDresponses 200|404|422
      */
     public function __invoke(int $id, UpdateUserData $data, GetUserService $find, UpdateUserService $update): JsonResponse
