@@ -3,10 +3,10 @@
 namespace App\Repositories\Tag;
 
 use App\Models\Tag;
-use App\Repositories\Contracts\TagRepositoryInterface;
+use App\Repositories\Tag\TagRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class TagRepository implements TagRepositoryInterface
+class TagRepository
 {
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {

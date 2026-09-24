@@ -3,12 +3,12 @@
 namespace App\Services\Category;
 
 use App\Models\Category;
-use App\Repositories\Contracts\CategoryRepositoryInterface;
+use App\Repositories\Category\CategoryRepository;
 
 class GetCategoryService
 {
     public function __construct(
-        private readonly CategoryRepositoryInterface $repository,
+        private readonly CategoryRepository $repository,
     ) {}
 
     public function handle(int $id): Category

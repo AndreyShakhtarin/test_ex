@@ -2,13 +2,13 @@
 
 namespace App\Services\User;
 
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\User\UserRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ListUsersService
 {
     public function __construct(
-        private readonly UserRepositoryInterface $repository,
+        private readonly UserRepository $repository,
     ) {}
 
     public function handle(int $perPage = 15): LengthAwarePaginator

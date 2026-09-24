@@ -5,12 +5,12 @@ namespace App\Services\Category;
 use App\Data\Category\CreateCategoryData;
 use App\Events\EntityCreated;
 use App\Models\Category;
-use App\Repositories\Contracts\CategoryRepositoryInterface;
+use App\Repositories\Category\CategoryRepository;
 
 class CreateCategoryService
 {
     public function __construct(
-        private readonly CategoryRepositoryInterface $repository,
+        private readonly CategoryRepository $repository,
     ) {}
 
     public function handle(CreateCategoryData $data): Category

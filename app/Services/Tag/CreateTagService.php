@@ -5,12 +5,12 @@ namespace App\Services\Tag;
 use App\Data\Tag\CreateTagData;
 use App\Events\EntityCreated;
 use App\Models\Tag;
-use App\Repositories\Contracts\TagRepositoryInterface;
+use App\Repositories\Tag\TagRepository;
 
 class CreateTagService
 {
     public function __construct(
-        private readonly TagRepositoryInterface $repository,
+        private readonly TagRepository $repository,
     ) {}
 
     public function handle(CreateTagData $data): Tag

@@ -5,13 +5,13 @@ namespace App\Services\User;
 use App\Data\User\UpdateUserData;
 use App\Events\EntityUpdated;
 use App\Models\User;
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\User\UserRepository;
 use Illuminate\Support\Facades\Hash;
 
 class UpdateUserService
 {
     public function __construct(
-        private readonly UserRepositoryInterface $repository,
+        private readonly UserRepository $repository,
     ) {}
 
     public function handle(User $user, UpdateUserData $data): User

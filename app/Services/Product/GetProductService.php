@@ -3,12 +3,12 @@
 namespace App\Services\Product;
 
 use App\Models\Product;
-use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Repositories\Product\ProductRepository;
 
 class GetProductService
 {
     public function __construct(
-        private readonly ProductRepositoryInterface $repository,
+        private readonly ProductRepository $repository,
     ) {}
 
     public function handle(int $id): Product

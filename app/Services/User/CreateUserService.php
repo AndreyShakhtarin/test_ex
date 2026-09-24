@@ -5,13 +5,13 @@ namespace App\Services\User;
 use App\Data\User\CreateUserData;
 use App\Events\EntityCreated;
 use App\Models\User;
-use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\User\UserRepository;
 use Illuminate\Support\Facades\Hash;
 
 class CreateUserService
 {
     public function __construct(
-        private readonly UserRepositoryInterface $repository,
+        private readonly UserRepository $repository,
     ) {}
 
     public function handle(CreateUserData $data): User

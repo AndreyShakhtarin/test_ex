@@ -2,13 +2,13 @@
 
 namespace App\Services\Product;
 
-use App\Repositories\Contracts\ProductRepositoryInterface;
+use App\Repositories\Product\ProductRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ListProductsService
 {
     public function __construct(
-        private readonly ProductRepositoryInterface $repository,
+        private readonly ProductRepository $repository,
     ) {}
 
     public function handle(int $perPage = 15): LengthAwarePaginator
