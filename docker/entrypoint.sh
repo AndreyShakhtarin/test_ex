@@ -7,7 +7,14 @@ if [ ! -f .env ]; then
     cp .env.example .env
 fi
 
-php artisan key:generate --force
+# Parse DATABASE_URL from Fly.io into individual DB vars
+if [ -n "$DATABASE_URL" ]; then
+    export DB_URL="$DATABASE_URL"
+fi
+
+if [ -z "$APP_KEY" ]; then
+    php artisan key:generate --force
+fi
 
 php artisan config:cache
 php artisan route:cache

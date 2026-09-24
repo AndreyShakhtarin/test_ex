@@ -18,16 +18,10 @@ primary_region = "ams"
     timeout = "10s"
     path = "/up"
 
-[[services]]
-  protocol = "tcp"
-  internal_port = 8080
-
-  [[services.ports]]
-    port = 8080
-
 [env]
   APP_ENV = "production"
   APP_DEBUG = "false"
+  APP_URL = "https://test-ex-api.fly.dev"
   LOG_LEVEL = "error"
   BROADCAST_CONNECTION = "reverb"
   QUEUE_CONNECTION = "sync"
@@ -35,10 +29,12 @@ primary_region = "ams"
   SESSION_DRIVER = "database"
   REVERB_APP_ID = "755289"
   REVERB_APP_KEY = "cxlqav5hmkaaibztf1pe"
-  REVERB_PORT = "8080"
+  REVERB_HOST = "test-ex-api.fly.dev"
+  REVERB_PORT = "443"
   REVERB_SCHEME = "https"
   VITE_REVERB_APP_KEY = "cxlqav5hmkaaibztf1pe"
-  VITE_REVERB_PORT = "8080"
+  VITE_REVERB_HOST = "test-ex-api.fly.dev"
+  VITE_REVERB_PORT = "443"
   VITE_REVERB_SCHEME = "https"
   DB_CONNECTION = "pgsql"
 
