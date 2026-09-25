@@ -2,6 +2,7 @@
 
 namespace App\Services\User;
 
+use App\Events\EntityListed;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -13,6 +14,10 @@ class ListUsersService
 
     public function handle(int $perPage = 15): LengthAwarePaginator
     {
-        return $this->repository->paginate($perPage);
+        $result = $this->repository->paginate($perPage);
+
+        event(new EntityListed('user', $result->total()));
+
+        return $result;
     }
 }

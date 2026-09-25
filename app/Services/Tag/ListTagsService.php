@@ -2,6 +2,7 @@
 
 namespace App\Services\Tag;
 
+use App\Events\EntityListed;
 use App\Repositories\Contracts\TagRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -13,6 +14,10 @@ class ListTagsService
 
     public function handle(int $perPage = 15): LengthAwarePaginator
     {
-        return $this->repository->paginate($perPage);
+        $result = $this->repository->paginate($perPage);
+
+        event(new EntityListed('tag', $result->total()));
+
+        return $result;
     }
 }

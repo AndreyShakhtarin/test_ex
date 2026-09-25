@@ -2,6 +2,7 @@
 
 namespace App\Services\Product;
 
+use App\Events\EntityListed;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -13,6 +14,10 @@ class ListProductsService
 
     public function handle(int $perPage = 15): LengthAwarePaginator
     {
-        return $this->repository->paginate($perPage);
+        $result = $this->repository->paginate($perPage);
+
+        event(new EntityListed('product', $result->total()));
+
+        return $result;
     }
 }

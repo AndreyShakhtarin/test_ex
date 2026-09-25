@@ -93,6 +93,12 @@
         .input-error { border-color: #ef4444 !important; }
         .cred-value { min-width: 160px; }
         .req { color: #f87171; margin-left: 0.2rem; }
+        .tags-checklist { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.5rem; background: #0f172a; border: 1px solid #334155; border-radius: 0.5rem; min-height: 2.5rem; }
+        .tags-checklist:empty::before { content: 'No tags yet'; color: #475569; font-size: 0.8rem; }
+        .tag-chip { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.6rem; border-radius: 9999px; border: 1px solid #334155; cursor: pointer; font-size: 0.78rem; user-select: none; transition: all 0.15s; }
+        .tag-chip input { display: none; }
+        .tag-chip .tag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .tag-chip:has(input:checked) { border-color: #6366f1; background: rgba(99,102,241,0.15); color: #a5b4fc; }
         .checkbox-group { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0; }
         .checkbox-group input[type="checkbox"] { appearance: none; width: 18px; height: 18px; border: 2px solid #475569; border-radius: 4px; background: #0f172a; cursor: pointer; position: relative; flex-shrink: 0; transition: all 0.15s; }
         .checkbox-group input[type="checkbox"]:checked { background: #6366f1; border-color: #6366f1; }
@@ -226,8 +232,10 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Category ID<span class="req">*</span></label>
-                            <input type="number" id="prod-category-id" placeholder="1">
+                            <label>Category<span class="req">*</span></label>
+                            <select id="prod-category-id">
+                                <option value="">— Loading... —</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Price<span class="req">*</span></label>
@@ -247,6 +255,10 @@
                                 <option value="out_of_stock">Out of Stock</option>
                             </select>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags</label>
+                        <div id="prod-tags-checklist" class="tags-checklist"></div>
                     </div>
                     <div style="display:flex;gap:0.5rem">
                         <button class="btn btn-primary" onclick="createProduct()">Create Product</button>
@@ -302,6 +314,49 @@
 
 <script>
 let api;
+
+function renderCategoryOption(cat) {
+    const el = document.createElement('option');
+    el.value = cat.id;
+    el.textContent = cat.name;
+    el.dataset.catId = cat.id;
+    return el;
+}
+
+function renderTagChip(tag) {
+    const label = document.createElement('label');
+    label.className = 'tag-chip';
+    label.dataset.tagId = tag.id;
+    label.innerHTML = `<input type="checkbox" value="${tag.id}"><span class="tag-dot" style="background:${tag.color || '#6366f1'}"></span>${tag.name}`;
+    return label;
+}
+
+function refreshCategorySelect() {
+    api.get('/categories?per_page=100').then(res => {
+        const sel = document.getElementById('prod-category-id');
+        const current = sel.value;
+        sel.innerHTML = '<option value="">— Select category —</option>';
+        res.data.data.forEach(cat => sel.appendChild(renderCategoryOption(cat)));
+        if (current) sel.value = current;
+    });
+}
+
+function refreshTagsChecklist() {
+    api.get('/tags?per_page=100').then(res => {
+        const box = document.getElementById('prod-tags-checklist');
+        const selected = getSelectedTagIds();
+        box.innerHTML = '';
+        res.data.data.forEach(tag => {
+            const chip = renderTagChip(tag);
+            if (selected.includes(tag.id)) chip.querySelector('input').checked = true;
+            box.appendChild(chip);
+        });
+    });
+}
+
+function getSelectedTagIds() {
+    return [...document.querySelectorAll('#prod-tags-checklist input:checked')].map(el => parseInt(el.value));
+}
 
 function showErrors(errors, prefix) {
     clearErrors(prefix);
@@ -436,6 +491,7 @@ async function deleteCategory(id) {
 async function createProduct() {
     clearErrors('prod-');
     try {
+        const tagIds = getSelectedTagIds();
         const res = await api.post('/products', {
             category_id: parseInt(document.getElementById('prod-category-id').value),
             name: document.getElementById('prod-name').value,
@@ -443,6 +499,7 @@ async function createProduct() {
             price: parseFloat(document.getElementById('prod-price').value),
             stock: parseInt(document.getElementById('prod-stock').value || 0),
             status: document.getElementById('prod-status').value,
+            ...(tagIds.length ? { tag_ids: tagIds } : {}),
         });
         showResponse('prod-response', res.data);
     } catch(e) {
@@ -518,17 +575,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    refreshCategorySelect();
+    refreshTagsChecklist();
+
     Echo.channel('entities')
         .listen('.entity.created', (e) => {
             logEvent('created', `<strong>[Created]</strong> ${e.entity} #${e.data.id} — <em>${e.data.name || e.data.email || ''}</em>`);
             updateStat(e.entity, 1);
+            if (e.entity === 'category') {
+                document.getElementById('prod-category-id').appendChild(renderCategoryOption(e.data));
+            }
+            if (e.entity === 'tag') {
+                document.getElementById('prod-tags-checklist').appendChild(renderTagChip(e.data));
+            }
         })
         .listen('.entity.updated', (e) => {
             logEvent('updated', `<strong>[Updated]</strong> ${e.entity} #${e.data.id} — <em>${e.data.name || e.data.email || ''}</em>`);
+            if (e.entity === 'category') {
+                const opt = document.querySelector(`#prod-category-id option[data-cat-id="${e.data.id}"]`);
+                if (opt) opt.textContent = e.data.name;
+            }
+            if (e.entity === 'tag') {
+                const chip = document.querySelector(`#prod-tags-checklist [data-tag-id="${e.data.id}"]`);
+                if (chip) {
+                    const checked = chip.querySelector('input').checked;
+                    chip.replaceWith(renderTagChip(e.data));
+                    const newChip = document.querySelector(`#prod-tags-checklist [data-tag-id="${e.data.id}"]`);
+                    if (newChip && checked) newChip.querySelector('input').checked = true;
+                }
+            }
         })
         .listen('.entity.deleted', (e) => {
             logEvent('deleted', `<strong>[Deleted]</strong> ${e.entity} #${e.id}`);
             updateStat(e.entity, -1);
+            if (e.entity === 'category') {
+                const opt = document.querySelector(`#prod-category-id option[data-cat-id="${e.id}"]`);
+                if (opt) opt.remove();
+            }
+            if (e.entity === 'tag') {
+                const chip = document.querySelector(`#prod-tags-checklist [data-tag-id="${e.id}"]`);
+                if (chip) chip.remove();
+            }
+        })
+        .listen('.entity.listed', (e) => {
+            logEvent('info', `<strong>[Listed]</strong> ${e.entity} — ${e.count} total`);
+        })
+        .listen('.entity.viewed', (e) => {
+            logEvent('info', `<strong>[Viewed]</strong> ${e.entity} #${e.id}`);
         });
 
     Echo.connector.pusher.connection.bind('connected', () => {

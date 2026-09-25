@@ -2,6 +2,7 @@
 
 namespace App\Services\Product;
 
+use App\Events\EntityViewed;
 use App\Models\Product;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 
@@ -16,6 +17,8 @@ class GetProductService
         $product = $this->repository->findById($id);
 
         abort_if($product === null, 404, 'Product not found');
+
+        event(new EntityViewed('product', $id));
 
         return $product;
     }

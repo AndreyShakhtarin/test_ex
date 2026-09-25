@@ -2,6 +2,7 @@
 
 namespace App\Services\Category;
 
+use App\Events\EntityListed;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -13,6 +14,10 @@ class ListCategoriesService
 
     public function handle(int $perPage = 15): LengthAwarePaginator
     {
-        return $this->repository->paginate($perPage);
+        $result = $this->repository->paginate($perPage);
+
+        event(new EntityListed('category', $result->total()));
+
+        return $result;
     }
 }

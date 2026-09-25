@@ -2,6 +2,7 @@
 
 namespace App\Services\User;
 
+use App\Events\EntityViewed;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
 
@@ -16,6 +17,8 @@ class GetUserService
         $user = $this->repository->findById($id);
 
         abort_if($user === null, 404, 'User not found');
+
+        event(new EntityViewed('user', $id));
 
         return $user;
     }
