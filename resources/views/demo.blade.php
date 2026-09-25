@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>API Demo</title>
+    <script>
+        @php
+            $appUrl = env('APP_URL', request()->getSchemeAndHttpHost());
+            $wsScheme = str_starts_with($appUrl, 'https') ? 'https' : 'http';
+            $wsPort = $wsScheme === 'https' ? 443 : 80;
+            $wsHost = parse_url($appUrl, PHP_URL_HOST) ?? request()->getHost();
+        @endphp
+        window.ReverbConfig = {
+            key: '{{ env('REVERB_APP_KEY') }}',
+            host: '{{ $wsHost }}',
+            port: {{ $wsPort }},
+            scheme: '{{ $wsScheme }}',
+        };
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -75,6 +89,15 @@
         .copy-btn:hover { color: #a5b4fc; background: #334155; }
         .copy-btn.copied { color: #22c55e; }
         .empty { color: #475569; font-size: 0.85rem; text-align: center; padding: 1.5rem; }
+        .field-error { color: #f87171; font-size: 0.75rem; margin-top: 0.3rem; }
+        .input-error { border-color: #ef4444 !important; }
+        .cred-value { min-width: 160px; }
+        .req { color: #f87171; margin-left: 0.2rem; }
+        .checkbox-group { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0; }
+        .checkbox-group input[type="checkbox"] { appearance: none; width: 18px; height: 18px; border: 2px solid #475569; border-radius: 4px; background: #0f172a; cursor: pointer; position: relative; flex-shrink: 0; transition: all 0.15s; }
+        .checkbox-group input[type="checkbox"]:checked { background: #6366f1; border-color: #6366f1; }
+        .checkbox-group input[type="checkbox"]:checked::after { content: '✓'; position: absolute; color: white; font-size: 12px; top: -1px; left: 2px; }
+        .checkbox-group label { font-size: 0.85rem; color: #e2e8f0; cursor: pointer; margin: 0; }
     </style>
 </head>
 <body>
@@ -141,16 +164,16 @@
                 <div class="section active" id="section-users">
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Name</label>
+                            <label>Name<span class="req">*</span></label>
                             <input type="text" id="user-name" placeholder="John Doe">
                         </div>
                         <div class="form-group">
-                            <label>Email</label>
+                            <label>Email<span class="req">*</span></label>
                             <input type="email" id="user-email" placeholder="john@example.com">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Password</label>
+                        <label>Password<span class="req">*</span></label>
                         <input type="password" id="user-password" placeholder="min 8 characters">
                     </div>
                     <div style="display:flex;gap:0.5rem">
@@ -165,11 +188,11 @@
                 <div class="section" id="section-categories">
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Name</label>
+                            <label>Name<span class="req">*</span></label>
                             <input type="text" id="cat-name" placeholder="Electronics">
                         </div>
                         <div class="form-group">
-                            <label>Slug</label>
+                            <label>Slug<span class="req">*</span></label>
                             <input type="text" id="cat-slug" placeholder="electronics">
                         </div>
                     </div>
@@ -177,7 +200,11 @@
                         <label>Description</label>
                         <textarea id="cat-description" rows="2" placeholder="Category description..."></textarea>
                     </div>
-                    <div style="display:flex;gap:0.5rem">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="cat-is-active" checked>
+                        <label for="cat-is-active">Active</label>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;margin-top:1rem">
                         <button class="btn btn-primary" onclick="createCategory()">Create Category</button>
                         <button class="btn btn-primary" onclick="loadCategories()">Load Categories</button>
                     </div>
@@ -189,21 +216,21 @@
                 <div class="section" id="section-products">
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Name</label>
+                            <label>Name<span class="req">*</span></label>
                             <input type="text" id="prod-name" placeholder="iPhone 15">
                         </div>
                         <div class="form-group">
-                            <label>Slug</label>
+                            <label>Slug<span class="req">*</span></label>
                             <input type="text" id="prod-slug" placeholder="iphone-15">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Category ID</label>
-                            <input type="number" id="prod-category" placeholder="1">
+                            <label>Category ID<span class="req">*</span></label>
+                            <input type="number" id="prod-category-id" placeholder="1">
                         </div>
                         <div class="form-group">
-                            <label>Price</label>
+                            <label>Price<span class="req">*</span></label>
                             <input type="number" id="prod-price" placeholder="999.99" step="0.01">
                         </div>
                     </div>
@@ -233,11 +260,11 @@
                 <div class="section" id="section-tags">
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Name</label>
+                            <label>Name<span class="req">*</span></label>
                             <input type="text" id="tag-name" placeholder="Sale">
                         </div>
                         <div class="form-group">
-                            <label>Slug</label>
+                            <label>Slug<span class="req">*</span></label>
                             <input type="text" id="tag-slug" placeholder="sale">
                         </div>
                     </div>
@@ -274,6 +301,26 @@
 </div>
 
 <script>
+let api;
+
+function showErrors(errors, prefix) {
+    clearErrors(prefix);
+    Object.entries(errors).forEach(([field, messages]) => {
+        const input = document.getElementById(prefix + field.replace(/_/g, '-'));
+        if (!input) return;
+        input.classList.add('input-error');
+        const el = document.createElement('div');
+        el.className = 'field-error';
+        el.textContent = messages[0];
+        input.parentNode.appendChild(el);
+    });
+}
+
+function clearErrors(prefix) {
+    document.querySelectorAll('.field-error').forEach(el => el.remove());
+    document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+}
+
 function copyText(id, btn) {
     const text = document.getElementById(id).textContent;
     navigator.clipboard.writeText(text).then(() => {
@@ -282,15 +329,6 @@ function copyText(id, btn) {
         setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
     });
 }
-
-const api = window.axios.create({
-    baseURL: '/api',
-    headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-    }
-});
 
 function switchTab(name) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -309,7 +347,6 @@ function logEvent(type, message) {
     const log = document.getElementById('ws-log');
     const placeholder = log.querySelector('.ws-placeholder');
     if (placeholder) placeholder.remove();
-
     const div = document.createElement('div');
     div.className = 'ws-event ' + type;
     const now = new Date().toLocaleTimeString();
@@ -327,32 +364,8 @@ function updateStat(entity, delta) {
     if (el) el.textContent = Math.max(0, parseInt(el.textContent) + delta);
 }
 
-// WebSocket
-Echo.channel('entities')
-    .listen('.entity.created', (e) => {
-        logEvent('created', `<strong>[Created]</strong> ${e.entity} #${e.data.id} — <em>${e.data.name || e.data.email || ''}</em>`);
-        updateStat(e.entity, 1);
-    })
-    .listen('.entity.updated', (e) => {
-        logEvent('updated', `<strong>[Updated]</strong> ${e.entity} #${e.data.id} — <em>${e.data.name || e.data.email || ''}</em>`);
-    })
-    .listen('.entity.deleted', (e) => {
-        logEvent('deleted', `<strong>[Deleted]</strong> ${e.entity} #${e.id}`);
-        updateStat(e.entity, -1);
-    });
-
-Echo.connector.pusher.connection.bind('connected', () => {
-    document.getElementById('ws-dot').classList.add('connected');
-    document.getElementById('ws-status-text').textContent = 'Connected';
-    logEvent('info', '<strong>[System]</strong> WebSocket connected to Reverb');
-});
-Echo.connector.pusher.connection.bind('disconnected', () => {
-    document.getElementById('ws-dot').classList.remove('connected');
-    document.getElementById('ws-status-text').textContent = 'Disconnected';
-});
-
-// Users
 async function createUser() {
+    clearErrors('user-');
     try {
         const res = await api.post('/users', {
             name: document.getElementById('user-name').value,
@@ -360,7 +373,10 @@ async function createUser() {
             password: document.getElementById('user-password').value,
         });
         showResponse('user-response', res.data);
-    } catch(e) { showResponse('user-response', e.response?.data || e.message); }
+    } catch(e) {
+        if (e.response?.status === 422) showErrors(e.response.data.errors, 'user-');
+        else showResponse('user-response', e.response?.data || e.message);
+    }
 }
 
 async function loadUsers() {
@@ -382,17 +398,20 @@ async function deleteUser(id) {
     } catch(e) { alert(e.response?.data?.message || e.message); }
 }
 
-// Categories
 async function createCategory() {
+    clearErrors('cat-');
     try {
         const res = await api.post('/categories', {
             name: document.getElementById('cat-name').value,
             slug: document.getElementById('cat-slug').value,
             description: document.getElementById('cat-description').value,
-            is_active: true,
+            is_active: document.getElementById('cat-is-active').checked,
         });
         showResponse('cat-response', res.data);
-    } catch(e) { showResponse('cat-response', e.response?.data || e.message); }
+    } catch(e) {
+        if (e.response?.status === 422) showErrors(e.response.data.errors, 'cat-');
+        else showResponse('cat-response', e.response?.data || e.message);
+    }
 }
 
 async function loadCategories() {
@@ -414,11 +433,11 @@ async function deleteCategory(id) {
     } catch(e) { alert(e.response?.data?.message || e.message); }
 }
 
-// Products
 async function createProduct() {
+    clearErrors('prod-');
     try {
         const res = await api.post('/products', {
-            category_id: parseInt(document.getElementById('prod-category').value),
+            category_id: parseInt(document.getElementById('prod-category-id').value),
             name: document.getElementById('prod-name').value,
             slug: document.getElementById('prod-slug').value,
             price: parseFloat(document.getElementById('prod-price').value),
@@ -426,7 +445,10 @@ async function createProduct() {
             status: document.getElementById('prod-status').value,
         });
         showResponse('prod-response', res.data);
-    } catch(e) { showResponse('prod-response', e.response?.data || e.message); }
+    } catch(e) {
+        if (e.response?.status === 422) showErrors(e.response.data.errors, 'prod-');
+        else showResponse('prod-response', e.response?.data || e.message);
+    }
 }
 
 async function loadProducts() {
@@ -448,8 +470,8 @@ async function deleteProduct(id) {
     } catch(e) { alert(e.response?.data?.message || e.message); }
 }
 
-// Tags
 async function createTag() {
+    clearErrors('tag-');
     try {
         const res = await api.post('/tags', {
             name: document.getElementById('tag-name').value,
@@ -457,7 +479,10 @@ async function createTag() {
             color: document.getElementById('tag-color').value,
         });
         showResponse('tag-response', res.data);
-    } catch(e) { showResponse('tag-response', e.response?.data || e.message); }
+    } catch(e) {
+        if (e.response?.status === 422) showErrors(e.response.data.errors, 'tag-');
+        else showResponse('tag-response', e.response?.data || e.message);
+    }
 }
 
 async function loadTags() {
@@ -482,15 +507,49 @@ async function deleteTag(id) {
     } catch(e) { alert(e.response?.data?.message || e.message); }
 }
 
-// Auto-fill slugs
-document.getElementById('cat-name').addEventListener('input', e => {
-    document.getElementById('cat-slug').value = e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-});
-document.getElementById('prod-name').addEventListener('input', e => {
-    document.getElementById('prod-slug').value = e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-});
-document.getElementById('tag-name').addEventListener('input', e => {
-    document.getElementById('tag-slug').value = e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+// Runs after Vite module (app.js) sets window.axios and window.Echo
+document.addEventListener('DOMContentLoaded', () => {
+    api = window.axios.create({
+        baseURL: '/api',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        }
+    });
+
+    Echo.channel('entities')
+        .listen('.entity.created', (e) => {
+            logEvent('created', `<strong>[Created]</strong> ${e.entity} #${e.data.id} — <em>${e.data.name || e.data.email || ''}</em>`);
+            updateStat(e.entity, 1);
+        })
+        .listen('.entity.updated', (e) => {
+            logEvent('updated', `<strong>[Updated]</strong> ${e.entity} #${e.data.id} — <em>${e.data.name || e.data.email || ''}</em>`);
+        })
+        .listen('.entity.deleted', (e) => {
+            logEvent('deleted', `<strong>[Deleted]</strong> ${e.entity} #${e.id}`);
+            updateStat(e.entity, -1);
+        });
+
+    Echo.connector.pusher.connection.bind('connected', () => {
+        document.getElementById('ws-dot').classList.add('connected');
+        document.getElementById('ws-status-text').textContent = 'Connected';
+        logEvent('info', '<strong>[System]</strong> WebSocket connected to Reverb');
+    });
+    Echo.connector.pusher.connection.bind('disconnected', () => {
+        document.getElementById('ws-dot').classList.remove('connected');
+        document.getElementById('ws-status-text').textContent = 'Disconnected';
+    });
+
+    document.getElementById('cat-name').addEventListener('input', e => {
+        document.getElementById('cat-slug').value = e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    });
+    document.getElementById('prod-name').addEventListener('input', e => {
+        document.getElementById('prod-slug').value = e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    });
+    document.getElementById('tag-name').addEventListener('input', e => {
+        document.getElementById('tag-slug').value = e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    });
 });
 </script>
 
