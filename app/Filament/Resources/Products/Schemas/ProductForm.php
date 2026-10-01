@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Products\Schemas;
 use App\Enums\Product\ProductStatusEnum;
 use App\Models\Category;
 use App\Models\Tag;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
